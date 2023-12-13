@@ -13,6 +13,7 @@ import { BunnySlide } from './bunny/bunny';
 import { TeapotSlide } from './newell_teaset/teapot';
 import { EnneperSurfaceSlide } from './EnneperSurface';
 import { SoapSlide } from './soap';
+import { BuzzerSlide } from './BuzzerSlide';
 
 const Slides: FC = () => (<>
   <Title>Graphics Sketchbook</Title>
@@ -51,6 +52,7 @@ const Slides: FC = () => (<>
     <BunnySlide/>
     <TeapotSlide/>
     <IcosahedronSlide/>
+    <BuzzerSlide/>
     <SoapSlide/>
     <EnneperSurfaceSlide/>
     <BezierDemo/>
