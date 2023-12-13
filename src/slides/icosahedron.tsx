@@ -212,7 +212,7 @@ export const IcosahedronSlide: FC = () => {
           of the icosahedron.
         </li>
         <li>
-          Geometry #3: The top face and the bottom face of the bounding box
+          Geometry #3: The top face and the bottom face of the box
           each contain a face of the icosahedron.
           The remaining 6 vertices form a "wobbly equator".
           (More math needed to find the precise vertex coordinates.)
