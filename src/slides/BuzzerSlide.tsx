@@ -28,6 +28,16 @@ export const BuzzerSlide: FC = () => {
           <li>Play with the controls in the config box.</li>
           <li>Press the buzzer.</li>
         </ul>
+        <p>
+          Apparently I have re-invented what is called an "octasphere" elsewhere,
+          for example in <a href="https://prideout.net/blog/octasphere/">Philip
+          Rideout's blog</a>.
+          There is a very small difference in the placement
+          of the inner vertices of the triangle subdivisions
+          (and of course I think that my solution is more elegant ;-).
+          <br />
+          TODO: Elaborate a bit on this placement.
+        </p>
       </div>
       <Canvas>
         <OrbitControls enableRotate={false /* leave rotation to PresentationControls */} />
