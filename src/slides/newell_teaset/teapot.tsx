@@ -120,20 +120,18 @@ export const Teapot : FC = () => {
 
     {patches.flatMap((ps, patchIdx) =>
       (showGrid === "all" || showGrid === "highlighted" && patchIdx === highlighted)
-      ? range4.map(i => (
+      ? ["#f00", "#00f", "#00f", "#f00"].map((color, i) => (
         <Fragment key={JSON.stringify([patchIdx, i])}>
-          <Line points={range4.map(j => points[ps[4*i+j]])} color={getColor(i)}/>
-          <Line points={range4.map(j => points[ps[4*j+i]])} color={getColor(i)}/>
+          <Line points={range4.map(j => points[ps[4*i+j]])} color={color}/>
+          <Line points={range4.map(j => points[ps[4*j+i]])} color={color}/>
         </Fragment>
       ))
-      : [])}
+      : []
+    )}
   </>);
 };
 
 // -----------------------------------------------------------------------------
-
-const colors = ["#00f", "#f00"];
-const getColor = (i: number) => colors[Number(i % 3 === 0)];
 
 export const TeapotSlide: FC = () => {
   const {scale, xShift, yShift, zShift} = useTeapotControls();
