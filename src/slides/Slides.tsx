@@ -29,17 +29,18 @@ const Slides: FC = () => (<>
             <br />
             (With the control key to jump to the beginning/end.)
             <br />
-            Or use the "slide" variable in the config box.
+            Or use the "slide#" control in the config box in the top-right corner.
+            (Open with the triangle handle.)
+          </li>
+          <li>
+            Switch to full-screen mode using the toggle in the config box.
           </li>
           <li>
             Use the mouse and the 3 mouse buttons to rotate/zoom/move
             the 3D objects.
           </li>
           <li>
-            Open the config box in the top-right corner to play with parameters.
-          </li>
-          <li>
-            Switch to full-screen mode using the toggle in the config box.
+            Play with the parameters in the config box.
           </li>
         </ul>
       </div>
