@@ -37,6 +37,7 @@ const schema = {
   xShift: {label: "x shift", value:  0, min: -5, max: 5},
   yShift: {label: "y shift", value: -1, min: -5, max: 5},
   zShift: {label: "z shift", value: -.5, min: -5, max: 5},
+  showSeams: {label: "show seams", value: false},
   showGrid: {label: "show grid", value: "none", options: ["none", "highlighted", "all"]},
   wireframe: false,
   roughness: {value: 0.47, min: 0, max: 1},
@@ -97,7 +98,9 @@ const quadrangulateBezier = (points: Vector3[]): SurfaceGenerator =>
 // -----------------------------------------------------------------------------
 
 export const Teapot : FC = () => {
-  const {wireframe, roughness, metalness, color, highlight, showGrid} = useTeapotControls();
+  const {
+    wireframe, roughness, metalness, color, highlight, showGrid, showSeams,
+  } = useTeapotControls();
   const [highlighted, setHighlighted] = useState<number | undefined>();
   console.log("highlighted", highlighted)
   return(<>
@@ -127,6 +130,22 @@ export const Teapot : FC = () => {
         </Fragment>
       ))
       : []
+    )}
+
+    {showSeams && patches.flatMap(([a,b,c,d, e,f,g,h, i,j,k,l, m,n,o,p], patchIdx) =>
+      [[a,b,c,d], [d,h,l,p], [p,o,n,m], [m,i,e,a]].map((seam =>
+        // TODO no hard-wired "20"
+        <Line color="white" points={subdivide(0, 1, 20).map(lambda =>
+          seam.reduce(
+            (sum: Vector3, pIdx: number, i: number) =>
+              sum.addScaledVector(
+                points[pIdx],
+                evalPolynomial(bernstein3[i], lambda)
+              ),
+            new Vector3()
+          )
+        )}/>
+      ))
     )}
   </>);
 };
