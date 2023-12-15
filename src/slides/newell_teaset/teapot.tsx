@@ -37,7 +37,7 @@ const schema = {
   xShift: {label: "x shift", value:  0, min: -5, max: 5},
   yShift: {label: "y shift", value: -1, min: -5, max: 5},
   zShift: {label: "z shift", value: -.5, min: -5, max: 5},
-  showGrid: {label: "show grid", value: false},
+  showGrid: {label: "show grid", value: "none", options: ["none", "highlighted", "all"]},
   wireframe: false,
   roughness: {value: 0, min: 0, max: 1},
   metalness: {value: 0, min: 0, max: 1},
@@ -98,45 +98,42 @@ const quadrangulateBezier = (points: Vector3[]): SurfaceGenerator =>
 
 export const Teapot : FC = () => {
   const {wireframe, roughness, metalness, color, highlight, showGrid} = useTeapotControls();
-  const [selected, setSelected] = useState<number | undefined>();
-  console.log("selected", selected)
+  const [highlighted, setHighlighted] = useState<number | undefined>();
+  console.log("highlighted", highlighted)
   return(<>
     {patches.map((vertexIndices, i) =>
       <mesh key={i}
         onPointerDown={e => {
           e.stopPropagation();
-          setSelected(i === selected ? undefined : i);
+          setHighlighted(i === highlighted ? undefined : i);
         }}
       >
         <surfaceGeometry args={[(args) => {
           quadrangulateBezier(vertexIndices.map(idx => points[idx]))(args);
         }]}/>
         <meshStandardMaterial {...{wireframe, roughness, metalness}}
-          color={i === selected ? highlight : color}
+          color={i === highlighted ? highlight : color}
           side={DoubleSide}
         />
       </mesh>
     )}
 
-    {showGrid && patches.flatMap((ps, patchIdx) => range4.map(i => (
-      <Fragment key={JSON.stringify([patchIdx, i])}>
-        <Line points={range4.map(j => points[ps[4*i+j]])} color={["#00f", "#f00"][isOuter(i)]}/>
-        <Line points={range4.map(j => points[ps[4*j+i]])} color={["#00f", "#f00"][isOuter(i)]}/>
-      </Fragment>
-    )))}
-    {// The sample patch:
-    showGrid && range4.map(i => (
-      <Fragment key={i}>
-        <Line points={range4.map(j => [i/8-2, 0, j/8+2.75])} color={["#00f", "#f00"][isOuter(i)]}/>
-        <Line points={range4.map(j => [j/8-2, 0, i/8+2.75])} color={["#00f", "#f00"][isOuter(i)]}/>
-      </Fragment>
-    ))}
+    {patches.flatMap((ps, patchIdx) =>
+      (showGrid === "all" || showGrid === "highlighted" && patchIdx === highlighted)
+      ? range4.map(i => (
+        <Fragment key={JSON.stringify([patchIdx, i])}>
+          <Line points={range4.map(j => points[ps[4*i+j]])} color={getColor(i)}/>
+          <Line points={range4.map(j => points[ps[4*j+i]])} color={getColor(i)}/>
+        </Fragment>
+      ))
+      : [])}
   </>);
 };
 
 // -----------------------------------------------------------------------------
 
-const isOuter = (i: number) =>  Number(i % 3 === 0);
+const colors = ["#00f", "#f00"];
+const getColor = (i: number) => colors[Number(i % 3 === 0)];
 
 export const TeapotSlide: FC = () => {
   const {scale, xShift, yShift, zShift} = useTeapotControls();
@@ -149,18 +146,20 @@ export const TeapotSlide: FC = () => {
       }}>
         <h2>The Utah Teapot</h2>
         <p>
-          ...with Bezier surfaces.
+          ...consisting of Bezier surfaces.
         </p>
         <p>
-          Click any point on the pot to highlight the corresponding patch. 
+          Click any point on the pot to highlight/unhighlight
+          the corresponding Bezier patch. 
         </p>
         <p>
-          Check "show grid" to see the mesh of control points
-          and check "wireframe" to reveal the control mesh inside the pot.
+          Change "show grid" in the config box
+          to see the mesh of control points
+          and check "wireframe"
+          to reveal the control mesh inside the pot.
         </p>
         <p>
-          A sample grid above the pot handle illustrates how each patch
-          of the teapot surface is represented by 4x4 vertices:
+          Each patch is represented by 4x4 vertices:
           The outer vertices are connected by red lines, the inner
           vertices are connected by blue lines.
           (Some grid lines collapse into single points
