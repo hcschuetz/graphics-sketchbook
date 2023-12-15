@@ -94,15 +94,40 @@ export const SlideShow: FC<{children: JSX.Element[]}> = ({children}) => {
 
   const ref = useDynamic(slide);
   useEffect(() => {
-    const onKeyUp = (evt: KeyboardEvent) => {
+    const nSlides = children.length;
+
+    const clampSlideNo = (n: number) => Math.max(1, Math.min(nSlides, n));
+
+    function onKeyUp(evt: KeyboardEvent) {
+      let n;
       switch (evt.key) {
-        case "ArrowRight": return setControls({slide: evt.ctrlKey ? children.length : ref.current + 1});
-        case "ArrowLeft":  return setControls({slide: evt.ctrlKey ? 1               : ref.current - 1});
+        case "ArrowRight":
+          n = evt.ctrlKey ? children.length : ref.current + 1;
+          break;
+        case "ArrowLeft":
+          n = evt.ctrlKey ? 1               : ref.current - 1;
+          break;
+        default: return;
       }
+      window.location.hash = String(clampSlideNo(n));
     };
-  
+
+    function onHashChange() {
+      let n = Number.parseInt(window.location.hash.substring(1));
+      if (Number.isNaN(n)) {
+        n = 1;
+      };
+      setControls({slide: clampSlideNo(n)});
+    }
+
     window.addEventListener("keyup", onKeyUp);
-    return () => window.removeEventListener('keyup', onKeyUp);
+    window.addEventListener("hashchange", onHashChange);
+    onHashChange();
+
+    return () => {
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("hashchange", onHashChange);
+    }
   }, []);
 
   const [step, setStep] = useState<number | undefined>();
