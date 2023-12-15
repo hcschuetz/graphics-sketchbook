@@ -117,38 +117,30 @@ export const Buzzer : FC<{
 
 // ---------------------------------------------------------------------------
 // The following display of subdivided geodesics is for comparison with
-// https://prideout.net/blog/octasphere
+// https://prideout.net/blog/octasphere and
+// https://catlikecoding.com/unity/tutorials/procedural-meshes/geodesic-octasphere/
 
 // <Line/>s take colors but <Sphere/>s take materials.
 const colors = ["cyan", "magenta", "yellow"];
 const materials = colors.map(color => new MeshStandardMaterial({color}));
 
-function interpolateSegments(w: number, points: Vector3[]): Vector3 {
-  const wn = w * (points.length - 1)
-  const idx = Math.floor(wn);
-  const lambda = wn - idx;
-  return lambda === 0
-  ? points[idx]
-  : points[idx].clone().multiplyScalar(1-lambda).add(
-      points[idx + 1].clone().multiplyScalar(lambda)
-    );
-}
-
-function geodesicPoints(from: Vector3, to: Vector3): Vector3[] {
+function geodesicPoints(from: Vector3, to: Vector3, nSteps = 0): Vector3[] {
   const result: Vector3[] = [];
 
-  // Recursively bipartitioning the angle between a and b
-  function fill(a: Vector3, b: Vector3, depth: number) {
-    if (depth <= 0) return;
-    const mid = a.clone().add(b).multiplyScalar(0.5).normalize();
-    fill(a, mid, depth - 1);
-    result.push(mid);
-    fill(mid, b, depth - 1);
+  const axis = new Vector3().crossVectors(from, to).normalize();
+  const angle = from.angleTo(to);
+  if (nSteps === 0) {
+    // It's for a circle segment.  Let's use bendings < 5°.
+    nSteps = Math.ceil(angle * (360 / TAU / 5));
   }
+  const step = angle / nSteps;
 
-  result.push(from);
-  fill(from, to, 5); // TODO don't hard-wire the depth
-  result.push(to);
+  const v = from.clone();
+  for (let i = 0; i <= nSteps; i++) {
+    result.push(v.clone());
+    v.applyAxisAngle(axis, step);
+  }
+  result.push(to.clone());
 
   return result;
 }
@@ -156,31 +148,21 @@ function geodesicPoints(from: Vector3, to: Vector3): Vector3[] {
 function Geodesics() {
   const {nStepsCap} = useControls("buzzer", controls);
   return subdivide(0, 1, nStepsCap).flatMap((u, i) => {
-    const v = 1 - u;
-    const sinU = Math.sin(u * (TAU/4));
-    const sinV = Math.sin(v * (TAU/4)); // === Math.cos(u * (TAU/4))
-    const pointsA = geodesicPoints(
-      new Vector3(sinU, sinV, 0),
-      new Vector3(sinU, 0, sinV),
-    );
-    const pointsB = geodesicPoints(
-      new Vector3(0, sinU, sinV),
-      new Vector3(sinV, sinU, 0),
-    );
-    const pointsC = geodesicPoints(
-      new Vector3(sinV, 0, sinU),
-      new Vector3(0, sinV, sinU),
-    )
-    const pointss = [pointsA, pointsB, pointsC];
-    return pointss.map((points, j) => {
+    const sin = Math.sin(u * (TAU/4));
+    const cos = Math.cos(u * (TAU/4));
+    return [
+      [new Vector3(sin, cos,  0 ), new Vector3(sin,  0 , cos)],
+      [new Vector3( 0 , sin, cos), new Vector3(cos, sin,  0 )],
+      [new Vector3(cos,  0 , sin), new Vector3( 0 , cos, sin)],
+    ].map(([from, to], j) => {
       const color = colors[j]
       return (
         <Fragment key={`${i}-${j}`}>
-          <Line points={points} color={color}/>
-          {i < nStepsCap && subdivide(0, 1, nStepsCap - i).map((w, k) => (
+          <Line points={geodesicPoints(from, to)} color={color}/>
+          {geodesicPoints(from, to, nStepsCap - i).map((p, k) => (
             <Sphere key={k}
               material={materials[j]}
-              position={interpolateSegments(w, points)}
+              position={p}
               scale={0.01}
             />
           ))}
