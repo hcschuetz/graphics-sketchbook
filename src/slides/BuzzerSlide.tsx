@@ -43,7 +43,8 @@ export const BuzzerSlide: FC = () => {
             To see it,
             check the "showGeodesics" toggle
             in the config box
-            and set "#steps cap" to a smaller number, but at least 3.
+            and set "#steps cap" (the resolution)
+            to a smaller number, but at least 3.
           </p>
           <p>
             The yellow vertices are computed by evenly subdividing the yellow
@@ -66,8 +67,8 @@ export const BuzzerSlide: FC = () => {
             This is not true for any of the three geodesics-based approaches.
           </p>
           <p>
-            In detail:
-            Consider the triangular face of the unit octogon in the (+,+,+) octant
+            How my approach works:
+            Consider the triangular face of the unit octahedron in the (+,+,+) octant
             and assume some resolution <em>n ∈ ℕ</em>.
             Then each auxiliary vertex on that face
             has coordinates <em>(x, y, z)</em> such that
@@ -83,24 +84,23 @@ export const BuzzerSlide: FC = () => {
             This maps the triangle sides (the "main" meridians and the equator)
             to equispaced geodesics:
             <br />
-            On these lines one of <em>x, y, z</em> is zero.
+            On each of these lines one of the coordinates <em>x, y, z</em> is zero.
             For example, on the equator <em>z = 0</em> {}
-            (if you chose the <em>z</em> axis pointing to a "pole")
+            (if you chose the <em>z</em> axis to point towards a "pole")
             and <em>(x, y, 0) = (x, 1-x, 0)</em> is mapped
             to <em>(sin(90°·x), sin(90°·(1-x)), 0) = (sin(90°·x), cos(90°·x), 0)</em>,
             which is already normalized.
-            The triangle sides are of course also geodesics.
           </p>
           <p>
             But the inner vertices need the normalization step.
-            They are not constructed on geodesics and not equispaced.
           </p>
           <p>
             If the resolution is a multiple of 3, the central point of
-            the octogon face <em>(1/3, 1/3, 1/3)</em> is one of the
+            the octahedron face at <em>(1/3, 1/3, 1/3)</em> is one of the
             auxiliary vertices.
             My approach (and even the straight-forward normalization
-            of vertices on the octogon face)
+            of vertices from the octahedron face,
+            which you get by unchecking "useSinesCap" in the config box)
             maps it to the center of the spheric triangle
             whereas the geodesic approaches don't.
           </p>
