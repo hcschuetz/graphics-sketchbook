@@ -159,10 +159,11 @@ export const TeapotSlide: FC = () => {
           to reveal the control mesh inside the pot.
         </p>
         <p>
-          Each patch is represented by 4x4 vertices:
-          The outer vertices are connected by red lines, the inner
-          vertices are connected by blue lines.
-          (Some grid lines collapse into single points
+          Each patch is represented by 4x4 vertices.
+          The visualization
+          connects the outer vertices with red lines
+          and the inner ones with blue lines.
+          (Some of these lines collapse into single points
           along the axis of the teapot.)
         </p>
       </div>
