@@ -19,7 +19,7 @@ const Slides: FC = () => (<>
   <Title>Graphics Sketchbook</Title>
   <Leva collapsed/>
   <SlideShow>
-  <Slide style={{padding: 50, fontSize: 24}}>
+    <Slide style={{padding: 50, fontSize: 24}}>
       <div>
         <h1>Graphics Sketchbook</h1>
         <div style={{fontSize: "170%", marginBottom: "3em"}}>Heribert Schütz</div>
