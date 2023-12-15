@@ -39,10 +39,10 @@ const schema = {
   zShift: {label: "z shift", value: -.5, min: -5, max: 5},
   showGrid: {label: "show grid", value: "none", options: ["none", "highlighted", "all"]},
   wireframe: false,
-  roughness: {value: 0, min: 0, max: 1},
-  metalness: {value: 0, min: 0, max: 1},
-  color: {value: "#ffffff"},
-  highlight: {value: "#00ff00"},
+  roughness: {value: 0.47, min: 0, max: 1},
+  metalness: {value: 0.96, min: 0, max: 1},
+  color: {value: "#f58542"},
+  highlight: {value: "#fffaf2"},
 };
 
 const useTeapotControls = () => useControls("teapot", schema);
