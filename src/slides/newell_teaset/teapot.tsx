@@ -1,7 +1,7 @@
 import { Line, OrbitControls, PresentationControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useState } from 'react';
 import { DoubleSide, Vector3 } from 'three';
 import { Slide } from '../../SlideShow';
 import teapot from './data/teapot?raw';
@@ -36,12 +36,13 @@ const schema = {
   scale: {label: "scale", value: 1, min: 0.1, max: 3},
   xShift: {label: "x shift", value:  0, min: -5, max: 5},
   yShift: {label: "y shift", value: -1, min: -5, max: 5},
-  zShift: {label: "z shift", value: 0, min: -5, max: 5},
+  zShift: {label: "z shift", value: -.5, min: -5, max: 5},
   showGrid: {label: "show grid", value: false},
   wireframe: false,
   roughness: {value: 0, min: 0, max: 1},
   metalness: {value: 0, min: 0, max: 1},
   color: {value: "#ffffff"},
+  highlight: {value: "#00ff00"},
 };
 
 const useTeapotControls = () => useControls("teapot", schema);
@@ -96,17 +97,26 @@ const quadrangulateBezier = (points: Vector3[]): SurfaceGenerator =>
 // -----------------------------------------------------------------------------
 
 export const Teapot : FC = () => {
-  const {wireframe, roughness, metalness, color, showGrid} = useTeapotControls();
+  const {wireframe, roughness, metalness, color, highlight, showGrid} = useTeapotControls();
+  const [selected, setSelected] = useState<number | undefined>();
+  console.log("selected", selected)
   return(<>
-    <mesh>
-      <surfaceGeometry args={[(args) => {
-        // TODO precompute much of this
-        for (const vertexIndices of patches) {
+    {patches.map((vertexIndices, i) =>
+      <mesh key={i}
+        onPointerDown={e => {
+          e.stopPropagation();
+          setSelected(i === selected ? undefined : i);
+        }}
+      >
+        <surfaceGeometry args={[(args) => {
           quadrangulateBezier(vertexIndices.map(idx => points[idx]))(args);
-        }
-      }]}/>
-      <meshStandardMaterial {...{wireframe, roughness, metalness, color}} side={DoubleSide}/>
-    </mesh>
+        }]}/>
+        <meshStandardMaterial {...{wireframe, roughness, metalness}}
+          color={i === selected ? highlight : color}
+          side={DoubleSide}
+        />
+      </mesh>
+    )}
 
     {showGrid && patches.flatMap((ps, patchIdx) => range4.map(i => (
       <Fragment key={JSON.stringify([patchIdx, i])}>
@@ -142,11 +152,14 @@ export const TeapotSlide: FC = () => {
           ...with Bezier surfaces.
         </p>
         <p>
-          Check "show grid" to see the mesh of control points
-          and "wireframe" to reveal the control mesh inside the pot.
+          Click any point on the pot to highlight the corresponding patch. 
         </p>
         <p>
-          A sample grid above the teapot handle illustrates how each patch
+          Check "show grid" to see the mesh of control points
+          and check "wireframe" to reveal the control mesh inside the pot.
+        </p>
+        <p>
+          A sample grid above the pot handle illustrates how each patch
           of the teapot surface is represented by 4x4 vertices:
           The outer vertices are connected by red lines, the inner
           vertices are connected by blue lines.
