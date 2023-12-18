@@ -96,8 +96,10 @@ So we have to map the points `(x, 1 - x, 0)` for `x = 0, 1/n, 2/n, ..., 1`
 uniformly to the arc on the sphere from `(0, 1, 0)` to `(1, 0, 0)`.
 To achieve this, each such point must be mapped to
 ```
-mapping((x, y, 0))
-= (sin(90°·x), cos(90°·x), 0)
+  (sin(90°·x), cos(90°·x), 0)
+```
+which can be rewritten to
+```
 = (sin(90°·x), sin(90° - 90°·x), 0)
 = (sin(90°·x), sin(90°·(1 - x)), 0)
 ```
@@ -105,22 +107,27 @@ Since we had `y = 1 - x`, we can further rewrite this to
 ```
 = (sin(90°·x), sin(90°·y), 0)
 ```
-And since `z = 0` on the current edge, we also have `sin(90°·z) = sin(0°) = 0`.
-So we can further rewrite the mapped vertex to
+For the other two edges we can derive analogous mappings.
+So we have these formulas for the three edges:
 ```
-= (sin(90°·x), sin(90°·y), sin(90°·z))
+(sin(90°·x), sin(90°·y),     0     )  if z = 0
+(sin(90°·x),     0     , sin(90°·z))  if y = 0
+(    0     , sin(90°·y), sin(90°·z))  if x = 0
 ```
-Exactly the same formula can be derived for the other two edges.
-
+Using the fact that `sin(90°·0) = sin(0°) = 0`,
+we can replace these formulas with a single formula for all three edges:
+```
+(sin(90°·x), sin(90°·y), sin(90°·z))
+```
 While this does not mean that we must use the same formula also for the inner
 vertices (where `x, y, z > 0`), it feels like a natural approach to use it
 as well.
 
-Unfortunately for an inner vertex `(x, y, z)` the mapped point
+Unfortunately for an inner vertex `(x, y, z)` of the face the mapped point
 `(sin(90°·x), sin(90°·y), sin(90°·z))` is not normalized,
 that is, it is not on the sphere.
-(Actually it is inside the sphere, but closer to the sphere than the
-initial vertex `(x, y, z)`.)
+Actually it is inside the sphere, but closer to the sphere than the
+initial vertex `(x, y, z)`.
 
 For example, the central point `(1/3, 1/3, 1/3)` of the face is mapped to
 ```
@@ -129,16 +136,16 @@ For example, the central point `(1/3, 1/3, 1/3)` of the face is mapped to
 = (1/2, 1/2, 1/2)
 ```
 which has a distance of `sqrt(3)/2 ~ 0.866` from the origin.
-(Actually this central point is the worst among all the points of the face.)
-For comparison, the original point `(1/3, 1/3, 1/3)` has distance
-`sqrt(3)/3 ~ 0.577`.
+Actually this central point is the worst among all the points of the face.
+But it is a lot better than the original point `(1/3, 1/3, 1/3)`,
+which has distance `sqrt(3)/3 ~ 0.577` from the origin.
 
 To fix this, we finally add a normalization step.
 Notice that this normalization does not affect the edge points,
-which have already been mapped to a point on the sphere.
+which are already mapped to normalized vectors.
 So the equidistance along the boundary arcs is preserved.
 
-Overall, we map a vertex `(x, y, z)` of the sub-triangulated face to:
+Overall, we map any vertex `(x, y, z)` of the sub-triangulated face to:
 ```
   normalize((sin(90°·x), sin(90°·y), sin(90°·z)))
 ```
