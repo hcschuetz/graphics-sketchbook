@@ -49,7 +49,7 @@ a regular octahedron, which has these advantages:
   making a subdivision easy.
 - If we only map one of the octahedron faces to the circumscribing sphere,
   we get an eighth of that sphere.
-  These eighths of spheres are interesting
+  These eighths of spheres are useful
   because they occur as the corners of rounded boxes.
 
 Let us start with the "unit octahedron" with its center at `(0, 0, 0)` and the 6
@@ -154,8 +154,7 @@ assuming that a class `Vector3` like the one from Three.js is available:
 const RIGHT_ANGLE = Math.PI / 2;
 const key = (i, j) => `${i},${j}`;
 
-
-function triangulateEighthSphere(n, emitTriangle) {
+function triangulateEighthOfASphere(n, emitTriangle) {
   const positionMap = new Map();
   for (let i = 0; i <= n; i++) {
     for (let j = 0; j <= n - i; j++) {
