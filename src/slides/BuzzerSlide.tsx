@@ -29,7 +29,7 @@ export const BuzzerSlide: FC = () => {
           <li>Play with the controls in the config box.</li>
           <li>Press the buzzer.</li>
         </ul>
-        <div style={{fontSize: "50%"}}>
+        <div style={{fontSize: "70%"}}>
           <p>
             Apparently I have re-invented
             what is called an "octasphere" elsewhere,
@@ -57,47 +57,16 @@ export const BuzzerSlide: FC = () => {
             (In a flat triangle the three vertex families would coincide.)
           </p>
           <p>
-            The approach chosen for the buzzer cap treats
+            In contrast, my triangulation treats
             the three coordinate axes and thus
             the three directions of the spherical triangle equally.
-            Check the "wireframe" and "useSinesCap" toggles to see the triangulation.
-            Rotating the spherical triangle around its center by ±120°
-            maps the auxiliary vertices of the red wireframe
-            to auxiliary vertices again.
-            This is not true for any of the three geodesics-based approaches.
+            Check the "wireframe" and "useSinesCap" toggles to see it.
+            See <a href="https://github.com/hcschuetz/graphics-sketchbook/doc/octasphere.md">here</a> for a description.
           </p>
           <p>
-            How my approach works:
-            Consider the triangular face of the unit octahedron in the (+,+,+) octant
-            and assume some resolution <em>n ∈ ℕ</em>.
-            Then each auxiliary vertex on that face
-            has coordinates <em>(x, y, z)</em> such that
-            {} <em>x+y+z = 1</em> and <em>x</em>, <em>y</em>, and <em>z</em> are
-            integral multiples of <em>1/n</em>.
-            (As a side node, "<em>( x : y : z )</em>" are called the "normalized barycentric
-            coordinates" in that triangle.)
-            Now we first map the vertex
-            to <em>(sin(90°·x), sin(90°·y), sin(90°·z))</em> {}
-            and then we normalize that vector.
-          </p>
-          <p>
-            This maps the triangle sides (the "main" meridians and the equator)
-            to equispaced geodesics:
-            <br />
-            On each of these lines one of the coordinates <em>x, y, z</em> is zero.
-            For example, on the equator <em>z = 0</em> {}
-            (if you chose the <em>z</em> axis to point towards a "pole")
-            and <em>(x, y, 0) = (x, 1-x, 0)</em> is mapped
-            to <em>(sin(90°·x), sin(90°·(1-x)), 0) = (sin(90°·x), cos(90°·x), 0)</em>,
-            which is already normalized.
-          </p>
-          <p>
-            But the inner vertices need the normalization step.
-          </p>
-          <p>
-            If the resolution is a multiple of 3, the central point of
-            the octahedron face at <em>(1/3, 1/3, 1/3)</em> is one of the
-            auxiliary vertices.
+            Notice that if the resolution is a multiple of 3,
+            the central point of the octahedron face at
+            {} <em>(1/3, 1/3, 1/3)</em> is one of the auxiliary vertices.
             My approach (and even the straight-forward normalization
             of vertices from the octahedron face,
             which you get by unchecking "useSinesCap" in the config box)
