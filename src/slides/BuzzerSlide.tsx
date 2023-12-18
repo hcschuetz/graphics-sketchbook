@@ -61,7 +61,7 @@ export const BuzzerSlide: FC = () => {
             the three coordinate axes and thus
             the three directions of the spherical triangle equally.
             Check the "wireframe" and "useSinesCap" toggles to see it.
-            See <a href="https://github.com/hcschuetz/graphics-sketchbook/doc/octasphere.md">here</a> for a description.
+            See <a href="https://github.com/hcschuetz/graphics-sketchbook/blob/main/doc/octasphere.md">here</a> for a description.
           </p>
           <p>
             Notice that if the resolution is a multiple of 3,
