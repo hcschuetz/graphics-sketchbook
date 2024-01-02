@@ -24,56 +24,15 @@ export const BuzzerSlide: FC = () => {
         position: "absolute", left: 30, top: 0, width: "42%", fontSize: 24,
         backgroundColor: "#0028",
       }}>
-        <h2>A Hemisphere and a Box</h2>
+        <h2>A Hemisphere and a Rounded Box</h2>
         <ul>
           <li>Play with the controls in the config box.</li>
           <li>Press the buzzer.</li>
+          <li>
+            See <a href="https://github.com/hcschuetz/octasphere">this
+            project</a> for more details on rendering spheres and corners of
+            rounded boxes.</li>
         </ul>
-        <div style={{fontSize: "70%"}}>
-          <p>
-            Apparently I have re-invented
-            what is called an "octasphere" elsewhere,
-            for example
-            {} <a href="https://prideout.net/blog/octasphere/">here</a>,
-            {} <a href="https://catlikecoding.com/unity/tutorials/procedural-meshes/octasphere/">here</a>,
-            and <a href="https://catlikecoding.com/unity/tutorials/procedural-meshes/geodesic-octasphere/">here</a>.
-          </p>
-          <p>
-            There is a subtle aspect regarding the placement of auxiliary vertices.
-            To see it,
-            check the "showGeodesics" toggle
-            in the config box
-            and set "#steps cap" (the resolution)
-            to a smaller number, but at least 3.
-          </p>
-          <p>
-            The yellow vertices are computed by evenly subdividing the yellow
-            geodesics connecting corresponding points on the two evenly
-            subdivided meridians.
-            But one could, with equal justification, connect the equator with
-            one of the two meridians and get the cyan or magenta geodesics and
-            vertices,
-            which are not the same as the yellow ones.
-            (In a flat triangle the three vertex families would coincide.)
-          </p>
-          <p>
-            In contrast, my triangulation treats
-            the three coordinate axes and thus
-            the three directions of the spherical triangle equally.
-            Check the "wireframe" and "useSinesCap" toggles to see it.
-            See <a href="https://github.com/hcschuetz/graphics-sketchbook/blob/main/doc/octasphere.md">here</a> for a description.
-          </p>
-          <p>
-            Notice that if the resolution is a multiple of 3,
-            the central point of the octahedron face at
-            {} <em>(1/3, 1/3, 1/3)</em> is one of the auxiliary vertices.
-            My approach (and even the straight-forward normalization
-            of vertices from the octahedron face,
-            which you get by unchecking "useSinesCap" in the config box)
-            maps it to the center of the spheric triangle
-            whereas the geodesic approaches don't.
-          </p>
-        </div>
       </div>
       <Canvas>
         <OrbitControls enableRotate={false /* leave rotation to PresentationControls */} />
