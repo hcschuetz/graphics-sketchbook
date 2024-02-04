@@ -97,7 +97,7 @@ const icosahedronSurface1: SurfaceGenerator = ({addVertex, addTriangle}) => {
 
 // top and bottom layer
 const height1 = 1;
-const radius1 = 0.8;
+const radius1 = 3 -  Math.sqrt(5);
 const group1 = subdivide(0, 5, 5).map(i => new Vector3(
   radius1 * Math.cos(TAU/6 * i),
   radius1 * Math.sin(TAU/6 * i),
@@ -105,8 +105,8 @@ const group1 = subdivide(0, 5, 5).map(i => new Vector3(
 ));
 
 // inner layers
-const height2 = -0.3;
-const radius2 = Math.sqrt(height1**2 + radius1**2 - height2)
+const height2 = 2 - Math.sqrt(5);
+const radius2 = Math.sqrt(5) - 1;
 const group2 = subdivide(0, 5, 5).map(i => new Vector3(
   radius2 * Math.cos(TAU/6 * i),
   radius2 * Math.sin(TAU/6 * i),
@@ -215,7 +215,6 @@ export const IcosahedronSlide: FC = () => {
           Geometry #3: The top face and the bottom face of the box
           each contain a face of the icosahedron.
           The remaining 6 vertices form a "wobbly equator".
-          (More math needed to find the precise vertex coordinates.)
         </li>
       </ul>
     </div>
