@@ -196,7 +196,7 @@ export const IcosahedronSlide: FC = () => {
     <Slide>
     <div style={{
       zIndex: 1,
-      position: "absolute", left: 30, top: 0, width: "30%", fontSize: 24
+      position: "absolute", left: 30, top: 0, width: "30%", fontSize: 18
     }}>
       <h2>Icosahedron</h2>
       <p>
@@ -206,15 +206,21 @@ export const IcosahedronSlide: FC = () => {
         <li>
           Geometry #1: 5 groups of 4 triangles;
           each group connects the "north pole" with the "south pole".
+          <br/>
+          (circumradius = 1)
         </li>
         <li>
           Geometry #2: Each face of the bounding box contains an edge
           of the icosahedron.
+          <br/>
+          (midradius = 1)
         </li>
         <li>
           Geometry #3: The top face and the bottom face of the box
           each contain a face of the icosahedron.
           The remaining 6 vertices form a "wobbly equator".
+          <br/>
+          (inradius = 1)
         </li>
       </ul>
     </div>
