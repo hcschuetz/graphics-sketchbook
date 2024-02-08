@@ -2,7 +2,7 @@ import { Line, OrbitControls, PresentationControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { FC } from 'react';
-import { DoubleSide, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Slide } from '../SlideShow';
 import { TAU, subdivide } from '../utils/lib';
 import { SurfaceGenerator } from '../SurfaceGeometry';
@@ -30,10 +30,10 @@ const icosahedronSurface0: SurfaceGenerator = ({addVertex, addTriangle}) => {
   for (let i = 0; i < 10; i += 2) {
     const [upper0, lower1, upper2, lower3] =
       [0, 1, 2, 3].map(j => nonPoles[(i+j) % 10]);
-    emit(northPole, upper0, upper2   );
-    emit(lower1   , upper0, upper2   );
-    emit(lower1   , lower3, upper2   );
-    emit(lower1   , lower3, southPole);
+    emit(upper2, northPole, upper0);
+    emit(upper0,  lower1  , upper2);
+    emit(lower3,  upper2  , lower1);
+    emit(lower1, southPole, lower3);
   };
 };
 
@@ -56,6 +56,7 @@ const icosahedronSurface1: SurfaceGenerator = ({addVertex, addTriangle}) => {
           addVertex(new Vector3(x    , y * a, 0    )),
           addVertex(new Vector3(x * a, 0    , z    )),
           addVertex(new Vector3(0    , y    , z * a)),
+          {invert: x*y*z > 0}
         );
       }
     }
@@ -81,7 +82,10 @@ const icosahedronSurface1: SurfaceGenerator = ({addVertex, addTriangle}) => {
         addTriangle(
           addVertex(p1),
           addVertex(p2),
-          addVertex(p3),            
+          addVertex(p3),
+          {invert: dir > 0},
+          // "brute-force" test:
+          // {invert: p1.clone().cross(p2).dot(p3) < 0},
         );
       }
     }
@@ -91,44 +95,39 @@ const icosahedronSurface1: SurfaceGenerator = ({addVertex, addTriangle}) => {
 // -----------------------------------------------------------------------------
 // Third approach:
 // - face on top
-// - layers with 3, 3, 3 vertices
+// - layers with 3, 3, 3, 3 vertices
 
-// TODO find and use exact parameter values
+const r3 = Math.sqrt(3);
+const cosines = [1, -1/2,  -1/2];
+const sines   = [0, r3/2, -r3/2];
 
-// top and bottom layer
-const height1 = 1;
-const radius1 = 3 -  Math.sqrt(5);
-const group1 = subdivide(0, 5, 5).map(i => new Vector3(
-  radius1 * Math.cos(TAU/6 * i),
-  radius1 * Math.sin(TAU/6 * i),
-  height1 * (-1)**i,
-));
+const r5 = Math.sqrt(5);
+const heights = [     1, r5 - 2, 2 - r5, -1     ];
+const radii   = [r5 - 3, r5 - 1, 1 - r5,  3 - r5];
 
-// inner layers
-const height2 = 2 - Math.sqrt(5);
-const radius2 = Math.sqrt(5) - 1;
-const group2 = subdivide(0, 5, 5).map(i => new Vector3(
-  radius2 * Math.cos(TAU/6 * i),
-  radius2 * Math.sin(TAU/6 * i),
-  height2 * (-1)**i,
-));
+const minus = ({x, y, z}: Vector3): Vector3 => new Vector3(-x, -y, -z);
+function vertex(layer: number, rot: number): Vector3 {
+  const r = radii[layer], t = rot % 3;
+  return new Vector3(r * cosines[t], r * sines[t], heights[layer]);
+}
 
 const icosahedronSurface2: SurfaceGenerator = ({addVertex, addTriangle}) => {
-  const emit = (a: Vector3, b: Vector3, c: Vector3) =>
-    addTriangle(addVertex(a), addVertex(b), addVertex(c));
-  emit(group1[0], group1[2], group1[4]);
-  for (let i = 0; i < 6; i += 2) {
-    const [top0, bot1, top2, bot3] = [0, 1, 2, 3].map(j => group1[(i+j) % 6]);
-    const [lower0, upper1, lower2] = [0, 1, 2   ].map(j => group2[(i+j) % 6]);
-    emit(top0, top2  , upper1);
-    emit(top0, lower0, upper1);
-    emit(top2, lower2, upper1);
-    emit(bot1, lower2, upper1);
-    emit(bot1, upper1, lower0);
-    emit(bot1, bot3  , lower2);
-  };
-  emit(group1[1], group1[3], group1[5]);
-};
+  function emitTwoTriangles(a: Vector3, b: Vector3, c: Vector3) {
+    // The given triangle...
+    addTriangle(addVertex(      a ), addVertex(      b ), addVertex(      c ));
+    // ...and its antipodal:
+    addTriangle(addVertex(minus(c)), addVertex(minus(b)), addVertex(minus(a)));
+  }
+  emitTwoTriangles(vertex(0, 0), vertex(0, 1), vertex(0, 2));
+  for (const rot of [0, 1, 2]) {
+    const V00 = vertex(0, rot), V01 = vertex(0, rot+1),
+                    V12 = vertex(1, rot+2),
+          V20 = vertex(2, rot), V21 = vertex(2, rot+1);
+    emitTwoTriangles(V12, V00, V20);
+    emitTwoTriangles(V12, V01, V00);
+    emitTwoTriangles(V12, V21, V01);
+  }
+}
 
 // -----------------------------------------------------------------------------
 
@@ -156,9 +155,7 @@ export const Icosahedron : FC = () => {
   return(<>
     <mesh>
       <surfaceGeometry args={[geometries[geometry-1]]}/>
-      <meshStandardMaterial {...{wireframe, roughness, metalness, color}}
-        side={DoubleSide}
-      />
+      <meshStandardMaterial {...{wireframe, roughness, metalness, color}}/>
     </mesh>
   </>);
 };
